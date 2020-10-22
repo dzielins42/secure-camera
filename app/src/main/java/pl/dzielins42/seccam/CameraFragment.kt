@@ -1,33 +1,27 @@
 package pl.dzielins42.seccam
 
+import android.Manifest
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import io.fotoapparat.Fotoapparat
+import io.fotoapparat.selector.back
+import kotlinx.android.synthetic.main.fragment_camera.*
+import pl.dzielins42.seccam.util.TimberLogger
+import pl.dzielins42.seccam.util.checkGrantResults
+import pl.dzielins42.seccam.util.runWithPermissions
+import pl.dzielins42.seccam.util.shouldShowRationaleDialog
+import timber.log.Timber
+import java.io.File
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CameraFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CameraFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var fotoapparat: Fotoapparat
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,23 +31,87 @@ class CameraFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CameraFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CameraFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        Timber.d("onViewCreated")
+        fotoapparat = Fotoapparat(
+            context = requireContext(),
+            view = cameraView,
+            logger = TimberLogger,
+            lensPosition = back()
+        )
+
+        takePhotoButton.setOnClickListener {
+            takePhoto()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.d("onStart")
+        runWithPermissions(
+            requiredPermissions,
+            PERMISSION_REQUEST_CODE
+        ) {
+            startFotoapparat()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.d("onStop")
+        stopFotoapparat()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (checkGrantResults(grantResults)) {
+                startFotoapparat()
+            } else if (shouldShowRationaleDialog(permissions)) {
+                // TODO Show rationale
+                Timber.d("Show rationale dialog")
             }
+        }
+    }
+
+    private fun startFotoapparat() {
+        takePhotoButton.isVisible = true
+        fotoapparat.start()
+    }
+
+    private fun stopFotoapparat() {
+        fotoapparat.stop()
+        takePhotoButton.isVisible = false
+    }
+
+    private fun takePhoto() {
+        fotoapparat
+            .autoFocus()
+            .takePicture().saveToFile(createOutputFile())
+    }
+
+    private fun createOutputFile(): File {
+        val filename = "${formatDate()}.jpg"
+        return File(requireContext().filesDir, filename)
+    }
+
+    private fun formatDate(date: Date = Calendar.getInstance().time): String {
+        return DateFormat.format(PHOTO_NAME_DATE_FORMAT, date).toString()
+    }
+
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 123
+
+        private const val PHOTO_NAME_DATE_FORMAT = "yyyyMMddHHmmss"
+
+        private val requiredPermissions = arrayOf(
+            Manifest.permission.CAMERA
+        )
     }
 }
