@@ -26,6 +26,7 @@ android {
 
 dependencies {
     def androidxNavigationVersion = "2.3.1"
+    def timberVersion = "4.7.1"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -40,4 +41,7 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$androidxNavigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$androidxNavigationVersion"
+
+    // Timber
+    implementation "com.jakewharton.timber:timber:$timberVersion"
 }
