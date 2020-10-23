@@ -1,4 +1,4 @@
-package pl.dzielins42.seccam
+package pl.dzielins42.seccam.ui
 
 import android.Manifest
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import io.fotoapparat.Fotoapparat
 import io.fotoapparat.selector.back
 import kotlinx.android.synthetic.main.fragment_camera.*
+import pl.dzielins42.seccam.R
 import pl.dzielins42.seccam.util.TimberLogger
 import pl.dzielins42.seccam.util.checkGrantResults
 import pl.dzielins42.seccam.util.runWithPermissions
