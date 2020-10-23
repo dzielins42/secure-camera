@@ -37,6 +37,8 @@ dependencies {
     def androidxNavigationVersion = "2.3.1"
     def timberVersion = "4.7.1"
     def fotoapparatVersion = "2.7.0"
+    def rxJavaVersion = "3.0.7"
+    def rxAndroidVersion = "3.0.0"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -57,4 +59,8 @@ dependencies {
 
     // Fotoapparat
     implementation "io.fotoapparat:fotoapparat:$fotoapparatVersion"
+
+    // RxJava
+    implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
+    implementation "io.reactivex.rxjava3:rxandroid:$rxAndroidVersion"
 }
