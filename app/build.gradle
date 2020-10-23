@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'de.mannodermaus.android-junit5'
 
 android {
     compileSdkVersion 30
@@ -39,6 +40,9 @@ dependencies {
     def fotoapparatVersion = "2.7.0"
     def rxJavaVersion = "3.0.7"
     def rxAndroidVersion = "3.0.0"
+    def jUnit4Version = "4.13.1"
+    def jUnit5Version = "5.7.0"
+    def mockitoVersion = "3.5.15"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -46,9 +50,17 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
-    testImplementation 'junit:junit:4.13'
+
+    // Testing
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    testImplementation "junit:junit:$jUnit4Version"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnit5Version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jUnit5Version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$jUnit5Version"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$jUnit5Version"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$androidxNavigationVersion"
