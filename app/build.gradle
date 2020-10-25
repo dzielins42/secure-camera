@@ -36,7 +36,9 @@ android {
 
 dependencies {
     def androidxNavigationVersion = "2.3.1"
+    def androidxLifecycleVersion = "2.2.0"
     def timberVersion = "4.7.1"
+    def koinVersion = "2.2.0-rc-3"
     def fotoapparatVersion = "2.7.0"
     def rxJavaVersion = "3.0.7"
     def rxAndroidVersion = "3.0.0"
@@ -69,8 +71,18 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$androidxNavigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$androidxNavigationVersion"
 
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidxLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion"
+
     // Timber
     implementation "com.jakewharton.timber:timber:$timberVersion"
+
+    // Koin
+    implementation "org.koin:koin-core:$koinVersion"
+    implementation "org.koin:koin-android:$koinVersion"
+    implementation "org.koin:koin-androidx-viewmodel:$koinVersion"
+    testImplementation "org.koin:koin-test:$koinVersion"
 
     // Fotoapparat
     implementation "io.fotoapparat:fotoapparat:$fotoapparatVersion"
