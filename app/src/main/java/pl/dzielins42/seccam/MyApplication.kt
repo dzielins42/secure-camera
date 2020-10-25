@@ -6,8 +6,8 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import pl.dzielins42.seccam.data.repo.GalleryRepository
-import pl.dzielins42.seccam.data.repo.MockGalleryRepository
-import pl.dzielins42.seccam.ui.GalleryViewModel
+import pl.dzielins42.seccam.data.repo.PlaceCageGalleryRepository
+import pl.dzielins42.seccam.ui.gallery.GalleryViewModel
 import pl.dzielins42.seccam.util.TimberKoinLogger
 import timber.log.Timber
 import timber.log.Timber.DebugTree
@@ -36,7 +36,7 @@ class MyApplication : Application() {
                 module { viewModel { GalleryViewModel(get()) } },
                 // Data
                 module {
-                    single<GalleryRepository> { MockGalleryRepository() }
+                    single<GalleryRepository> { PlaceCageGalleryRepository() }
                 }
             ))
         }

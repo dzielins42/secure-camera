@@ -13,4 +13,9 @@ data class FileGalleryItem(
         get() = file.path
 }
 
+data class UrlGalleryItem(
+    override val id: String,
+    val url: String
+) : GalleryItem()
+
 // UrlGalleryItem, DrawableGalleryItem etc.
