@@ -38,6 +38,7 @@ dependencies {
     def androidxNavigationVersion = "2.3.1"
     def androidxLifecycleVersion = "2.2.0"
     def timberVersion = "4.7.1"
+    def glideVersion = "4.11.0"
     def koinVersion = "2.2.0-rc-3"
     def fotoapparatVersion = "2.7.0"
     def rxJavaVersion = "3.0.7"
@@ -77,6 +78,9 @@ dependencies {
 
     // Timber
     implementation "com.jakewharton.timber:timber:$timberVersion"
+
+    // Glide
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
 
     // Koin
     implementation "org.koin:koin-core:$koinVersion"
