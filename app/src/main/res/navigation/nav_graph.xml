@@ -19,9 +19,13 @@
     </fragment>
     <fragment
         android:id="@+id/photoFragment"
-        android:name="pl.dzielins42.seccam.ui.PhotoFragment"
+        android:name="pl.dzielins42.seccam.ui.photo.PhotoFragment"
         android:label="fragment_photo"
-        tools:layout="@layout/fragment_photo" />
+        tools:layout="@layout/fragment_photo" >
+        <argument
+            android:name="item"
+            app:argType="pl.dzielins42.seccam.data.model.GalleryItem" />
+    </fragment>
     <fragment
         android:id="@+id/cameraFragment"
         android:name="pl.dzielins42.seccam.ui.CameraFragment"

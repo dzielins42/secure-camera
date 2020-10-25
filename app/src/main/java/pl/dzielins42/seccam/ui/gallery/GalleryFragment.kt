@@ -31,9 +31,6 @@ class GalleryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        photoDetailsButton.setOnClickListener {
-            findNavController().navigate(R.id.photoFragment)
-        }
         newPhotoButton.setOnClickListener {
             findNavController().navigate(R.id.cameraFragment)
         }
@@ -57,7 +54,9 @@ class GalleryFragment : Fragment() {
         adapter.submitList(viewState.items)
     }
 
-    private fun onItemClick(item:GalleryItem){
-        findNavController().navigate(R.id.photoFragment)
+    private fun onItemClick(item: GalleryItem) {
+        findNavController().navigate(
+            GalleryFragmentDirections.actionGalleryFragmentToPhotoFragment(item)
+        )
     }
 }

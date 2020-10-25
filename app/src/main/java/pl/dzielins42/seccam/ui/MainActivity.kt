@@ -1,7 +1,7 @@
 package pl.dzielins42.seccam.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import pl.dzielins42.seccam.R
 
 class MainActivity : AppCompatActivity() {

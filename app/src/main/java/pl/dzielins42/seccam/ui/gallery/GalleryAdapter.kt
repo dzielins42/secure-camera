@@ -1,6 +1,5 @@
 package pl.dzielins42.seccam.ui.gallery
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_gallery.view.*
 import pl.dzielins42.seccam.R
 import pl.dzielins42.seccam.data.model.GalleryItem
-import pl.dzielins42.seccam.data.model.UrlGalleryItem
 
 class GalleryAdapter(
     private val itemClickListener: (GalleryItem) -> Unit
@@ -40,12 +38,10 @@ class GalleryAdapter(
         ) {
             itemView.imageView.apply {
                 setOnClickListener { clickListener.invoke(item) }
-                if (item is UrlGalleryItem) {
-                    Glide.with(this)
-                        .load(item)
-                        .centerCrop()
-                        .into(this)
-                }
+                Glide.with(this)
+                    .load(item)
+                    .centerCrop()
+                    .into(this)
             }
         }
     }

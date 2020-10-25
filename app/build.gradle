@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 30
@@ -36,7 +37,6 @@ android {
 }
 
 dependencies {
-    def androidxNavigationVersion = "2.3.1"
     def androidxLifecycleVersion = "2.2.0"
     def timberVersion = "4.7.1"
     def glideVersion = "4.11.0"
