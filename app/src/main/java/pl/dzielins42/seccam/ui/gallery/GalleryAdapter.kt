@@ -8,9 +8,11 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_gallery.view.*
 import pl.dzielins42.seccam.R
 import pl.dzielins42.seccam.data.model.GalleryItem
+import pl.dzielins42.seccam.data.model.UrlGalleryItem
 
 class GalleryAdapter(
     private val itemClickListener: (GalleryItem) -> Unit
@@ -37,8 +39,13 @@ class GalleryAdapter(
             clickListener: (GalleryItem) -> Unit
         ) {
             itemView.imageView.apply {
-                setBackgroundColor(COLORS[item.id.hashCode() % COLORS.size])
                 setOnClickListener { clickListener.invoke(item) }
+                if (item is UrlGalleryItem) {
+                    Glide.with(this)
+                        .load(item)
+                        .centerCrop()
+                        .into(this)
+                }
             }
         }
     }
@@ -53,10 +60,5 @@ class GalleryAdapter(
                 return oldItem == newItem
             }
         }
-
-        private val COLORS = listOf<Int>(
-            Color.RED, Color.GREEN, Color.BLUE,
-            Color.CYAN, Color.MAGENTA, Color.YELLOW
-        )
     }
 }

@@ -38,7 +38,9 @@ class PlaceCageGalleryRepository : GalleryRepository {
             UrlGalleryItem("PlacaCage1", "https://www.placecage.com/200/150"),
             UrlGalleryItem("PlacaCage2", "https://www.placecage.com/400/300"),
             UrlGalleryItem("PlacaCage3", "https://www.placecage.com/c/200/150"),
-            UrlGalleryItem("PlacaCage4", "https://www.placecage.com/c/400/300")
+            UrlGalleryItem("PlacaCage4", "https://www.placecage.com/c/400/300"),
+            UrlGalleryItem("PlacaCage5", "https://www.placecage.com/c/300/200"),
+            UrlGalleryItem("PlacaCage6", "https://www.placecage.com/300/200")
         )
     }
 }
