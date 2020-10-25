@@ -1,14 +1,14 @@
-package pl.dzielins42.seccam.ui
+package pl.dzielins42.seccam.ui.camera
 
 import android.Manifest
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import io.fotoapparat.Fotoapparat
+import io.fotoapparat.result.WhenDoneListener
 import io.fotoapparat.selector.back
 import kotlinx.android.synthetic.main.fragment_camera.*
 import pl.dzielins42.seccam.R
@@ -20,22 +20,13 @@ import timber.log.Timber
 import java.io.File
 import java.util.*
 
-class CameraFragment : Fragment() {
+class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     private lateinit var fotoapparat: Fotoapparat
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_camera, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Timber.d("onViewCreated")
         fotoapparat = Fotoapparat(
             context = requireContext(),
             view = cameraView,
@@ -94,7 +85,14 @@ class CameraFragment : Fragment() {
     private fun takePhoto() {
         fotoapparat
             .autoFocus()
-            .takePicture().saveToFile(createOutputFile())
+            .takePicture()
+            // TODO Save through GalleryRepository
+            .saveToFile(createOutputFile())
+            .whenDone(object: WhenDoneListener<Unit> {
+                override fun whenDone(it: Unit?) {
+                    findNavController().navigateUp()
+                }
+            })
     }
 
     private fun createOutputFile(): File {

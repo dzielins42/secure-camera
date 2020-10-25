@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="pl.dzielins42.seccam.ui.CameraFragment"
+        android:name="pl.dzielins42.seccam.ui.camera.CameraFragment"
         android:label="@string/label_take_photo"
         tools:layout="@layout/fragment_camera" />
 </navigation>

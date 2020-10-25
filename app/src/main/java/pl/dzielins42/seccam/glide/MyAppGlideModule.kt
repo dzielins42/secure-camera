@@ -5,6 +5,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
+import pl.dzielins42.seccam.data.model.FileGalleryItem
 import pl.dzielins42.seccam.data.model.UrlGalleryItem
 import java.io.InputStream
 
@@ -16,6 +17,11 @@ class MyAppGlideModule : AppGlideModule() {
             UrlGalleryItem::class.java,
             InputStream::class.java,
             UrlGalleryItemModelLoader.Factory()
+        )
+        registry.prepend(
+            FileGalleryItem::class.java,
+            InputStream::class.java,
+            FileGalleryItemModelLoader.Factory()
         )
     }
 }
