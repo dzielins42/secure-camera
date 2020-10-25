@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/galleryFragment"
         android:name="pl.dzielins42.seccam.ui.gallery.GalleryFragment"
-        android:label="fragment_gallery"
-        tools:layout="@layout/fragment_gallery" >
+        android:label="@string/label_gallery"
+        tools:layout="@layout/fragment_gallery">
         <action
             android:id="@+id/action_galleryFragment_to_photoFragment"
             app:destination="@id/photoFragment" />
@@ -20,8 +20,8 @@
     <fragment
         android:id="@+id/photoFragment"
         android:name="pl.dzielins42.seccam.ui.photo.PhotoFragment"
-        android:label="fragment_photo"
-        tools:layout="@layout/fragment_photo" >
+        android:label="@string/label_photo_details"
+        tools:layout="@layout/fragment_photo">
         <argument
             android:name="item"
             app:argType="pl.dzielins42.seccam.data.model.GalleryItem" />
@@ -29,6 +29,6 @@
     <fragment
         android:id="@+id/cameraFragment"
         android:name="pl.dzielins42.seccam.ui.CameraFragment"
-        android:label="fragment_camera"
+        android:label="@string/label_take_photo"
         tools:layout="@layout/fragment_camera" />
 </navigation>

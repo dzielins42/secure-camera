@@ -1,9 +1,7 @@
 package pl.dzielins42.seccam.ui.gallery
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -13,19 +11,11 @@ import pl.dzielins42.seccam.R
 import pl.dzielins42.seccam.data.model.GalleryItem
 import timber.log.Timber
 
-class GalleryFragment : Fragment() {
+class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     private val viewModel by viewModel<GalleryViewModel>()
     private val adapter = GalleryAdapter { item ->
         onItemClick(item)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gallery, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

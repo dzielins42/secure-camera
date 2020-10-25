@@ -3,4 +3,8 @@
     <string name="hello_gallery_fragment">Hello gallery fragment</string>
     <string name="hello_photo_fragment">Hello photo fragment</string>
     <string name="hello_camera_fragment">Hello camera fragment</string>
+
+    <string name="label_gallery">Gallery</string>
+    <string name="label_photo_details">Photo Details</string>
+    <string name="label_take_photo">Take Photo</string>
 </resources>
