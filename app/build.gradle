@@ -17,6 +17,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "PASSWORD", "\"swordfish42\"")
     }
 
     compileOptions {
@@ -67,6 +69,9 @@ dependencies {
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidxLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion"
+
+    // Security
+    implementation "androidx.security:security-crypto:$androidxSecurityVersion"
 
     // Timber
     implementation "com.jakewharton.timber:timber:$timberVersion"

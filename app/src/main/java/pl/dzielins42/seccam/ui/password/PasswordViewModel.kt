@@ -4,10 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pl.dzielins42.seccam.data.repo.PasswordRepository
 
-class PasswordViewModel : ViewModel() {
+class PasswordViewModel(
+    private val passwordRepository: PasswordRepository
+) : ViewModel() {
 
     val viewState: LiveData<PasswordViewState>
         get() = mutableViewState
@@ -16,10 +18,9 @@ class PasswordViewModel : ViewModel() {
     fun validatePassword(password: String) {
         viewModelScope.launch {
             mutableViewState.postValue(PasswordViewState.Loading)
-            delay(2000)
-
+            val result = passwordRepository.validatePassword(password)
             mutableViewState.postValue(
-                if ("password" == password) PasswordViewState.PasswordCorrect else PasswordViewState.PasswordIncorrect
+                if (result) PasswordViewState.PasswordCorrect else PasswordViewState.PasswordIncorrect
             )
         }
     }

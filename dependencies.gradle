@@ -2,6 +2,7 @@ ext {
     kotlinVersion = "1.4.10"
     androidxLifecycleVersion = "2.2.0"
     androidxNavigationVersion = "2.3.1"
+    androidxSecurityVersion = "1.1.0-alpha02"
     materialComponentsVersion = "1.2.1"
     timberVersion = "4.7.1"
     glideVersion = "4.11.0"
