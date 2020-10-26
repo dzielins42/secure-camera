@@ -61,6 +61,9 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$androidxNavigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$androidxNavigationVersion"
 
+    // Material Components
+    implementation "com.google.android.material:material:$materialComponentsVersion"
+
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidxLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion"
