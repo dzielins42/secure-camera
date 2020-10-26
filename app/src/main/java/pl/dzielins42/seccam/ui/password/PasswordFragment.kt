@@ -47,6 +47,7 @@ class PasswordFragment : Fragment(R.layout.fragment_password) {
     }
 
     private fun handleLoadingViewState() {
+        TransitionManager.beginDelayedTransition(fragmentRootView)
         passwordInputContainer.isVisible = false
         confirmButton.isVisible = false
         loadingIndicator.isVisible = true
