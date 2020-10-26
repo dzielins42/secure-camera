@@ -8,6 +8,7 @@ import org.koin.dsl.module
 import pl.dzielins42.seccam.data.repo.FileSystemGalleryRepository
 import pl.dzielins42.seccam.data.repo.GalleryRepository
 import pl.dzielins42.seccam.ui.gallery.GalleryViewModel
+import pl.dzielins42.seccam.ui.password.PasswordViewModel
 import pl.dzielins42.seccam.util.TimberKoinLogger
 import timber.log.Timber
 import timber.log.Timber.DebugTree
@@ -33,7 +34,10 @@ class MyApplication : Application() {
             androidContext(this@MyApplication)
             modules(listOf(
                 // ViewModels
-                module { viewModel { GalleryViewModel(get()) } },
+                module {
+                    viewModel { GalleryViewModel(get()) }
+                    viewModel { PasswordViewModel() }
+                },
                 // Data
                 module {
                     single<GalleryRepository> { FileSystemGalleryRepository(this@MyApplication.filesDir) }

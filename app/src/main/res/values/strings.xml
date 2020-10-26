@@ -11,4 +11,8 @@
 
     <string name="password_input_hint">Password</string>
     <string name="password_confirm_button_label">Enter</string>
+
+    <string name="password_incorrect_dialog_title">Password incorrect</string>
+    <string name="password_incorrect_dialog_msg">Please type correct password.</string>
+    <string name="password_incorrect_dialog_positier_button">@android:string/ok</string>
 </resources>
