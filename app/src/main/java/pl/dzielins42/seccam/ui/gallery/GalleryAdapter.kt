@@ -3,7 +3,6 @@ package pl.dzielins42.seccam.ui.gallery
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -18,10 +17,6 @@ class GalleryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_gallery, parent, false)
-        val rows = parent.context.resources.getInteger(R.integer.galleryGridRows)
-        view.updateLayoutParams {
-            height = parent.measuredHeight / rows
-        }
         return GalleryItemViewHolder(view)
     }
 
