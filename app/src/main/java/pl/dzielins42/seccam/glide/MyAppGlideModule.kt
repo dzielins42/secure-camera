@@ -37,7 +37,7 @@ class MyAppGlideModule : AppGlideModule() {
         circularProgressDrawable.strokeWidth = 5f
         circularProgressDrawable.centerRadius = 30f
         circularProgressDrawable.setColorSchemeColors(
-            ContextCompat.getColor(context, R.color.colorAccent)
+            ContextCompat.getColor(context, R.color.primaryDarkColor)
         )
         circularProgressDrawable.start()
 
