@@ -3,7 +3,6 @@ package pl.dzielins42.seccam.data.repo
 import android.graphics.Bitmap
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.processors.BehaviorProcessor
 import pl.dzielins42.seccam.data.model.GalleryItem
 import pl.dzielins42.seccam.data.model.UrlGalleryItem
@@ -14,13 +13,6 @@ class PlaceCageGalleryRepository : GalleryRepository {
 
     override fun observeGalleryItems(): Flowable<List<GalleryItem>> {
         return images
-    }
-
-    override fun getGalleryItem(itemId: String): Single<GalleryItem> {
-        return images.firstOrError()
-            .map { imageList ->
-                imageList.first { it.id == itemId }
-            }
     }
 
     override fun saveGalleryItem(itemId: String, bitmap: Bitmap): Completable {

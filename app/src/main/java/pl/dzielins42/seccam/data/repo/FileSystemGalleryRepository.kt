@@ -55,10 +55,6 @@ class FileSystemGalleryRepository(
             }
     }
 
-    override fun getGalleryItem(itemId: String): Single<GalleryItem> {
-        TODO("Not yet implemented")
-    }
-
     override fun saveGalleryItem(itemId: String, bitmap: Bitmap): Completable {
         return Completable.fromAction {
             val file = File(baseDir, itemId)
