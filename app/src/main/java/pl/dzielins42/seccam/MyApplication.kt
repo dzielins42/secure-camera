@@ -12,6 +12,7 @@ import pl.dzielins42.seccam.data.repo.FileSystemGalleryRepository
 import pl.dzielins42.seccam.data.repo.GalleryRepository
 import pl.dzielins42.seccam.data.repo.PasswordRepository
 import pl.dzielins42.seccam.data.repo.SharedPreferencesPasswordRepository
+import pl.dzielins42.seccam.ui.camera.CameraViewModel
 import pl.dzielins42.seccam.ui.gallery.GalleryViewModel
 import pl.dzielins42.seccam.ui.password.PasswordViewModel
 import pl.dzielins42.seccam.util.TimberKoinLogger
@@ -42,6 +43,7 @@ class MyApplication : Application() {
                 module {
                     viewModel { GalleryViewModel(get()) }
                     viewModel { PasswordViewModel(get()) }
+                    viewModel { CameraViewModel(get()) }
                 },
                 // Data
                 module {

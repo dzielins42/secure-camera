@@ -57,9 +57,10 @@ class FileSystemGalleryRepository(
 
     override fun saveGalleryItem(itemId: String, bitmap: Bitmap): Completable {
         return Completable.fromAction {
-            val file = File(baseDir, itemId)
+            val fileName = "$itemId.jpg"
+            val file = File(baseDir, fileName)
             if (!file.createNewFile()) {
-                throw IOException("File $itemId cannot be created")
+                throw IOException("File $fileName cannot be created")
             }
             bitmapEncoder.encode(bitmap, file)
         }.subscribeOn(Schedulers.io())

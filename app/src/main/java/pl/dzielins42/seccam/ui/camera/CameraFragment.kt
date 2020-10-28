@@ -8,9 +8,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import io.fotoapparat.Fotoapparat
+import io.fotoapparat.result.BitmapPhoto
 import io.fotoapparat.result.WhenDoneListener
 import io.fotoapparat.selector.back
 import kotlinx.android.synthetic.main.fragment_camera.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import pl.dzielins42.seccam.R
 import pl.dzielins42.seccam.util.TimberLogger
 import pl.dzielins42.seccam.util.checkGrantResults
@@ -22,6 +24,7 @@ import java.util.*
 
 class CameraFragment : Fragment(R.layout.fragment_camera) {
 
+    private val viewModel by viewModel<CameraViewModel>()
     private lateinit var fotoapparat: Fotoapparat
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,6 +40,8 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         takePhotoButton.setOnClickListener {
             takePhoto()
         }
+
+        initViewModel()
     }
 
     override fun onStart() {
@@ -86,13 +91,42 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         fotoapparat
             .autoFocus()
             .takePicture()
-            // TODO Save through GalleryRepository
-            .saveToFile(createOutputFile())
-            .whenDone(object: WhenDoneListener<Unit> {
-                override fun whenDone(it: Unit?) {
-                    findNavController().navigateUp()
+            .toBitmap()
+            .whenDone(object : WhenDoneListener<BitmapPhoto> {
+                override fun whenDone(bitmapPhoto: BitmapPhoto?) {
+                    viewModel.savePhoto(formatDate(), bitmapPhoto)
                 }
             })
+    }
+
+    private fun initViewModel() {
+        viewModel.viewState.observe(viewLifecycleOwner, { handleViewState(it) })
+    }
+
+    private fun handleViewState(viewState: CameraViewState) {
+        viewState.handle(
+            { handleLoadingViewState() },
+            { content -> handleContentViewState(content) },
+            { error -> handleErrorViewState(error) }
+        )
+    }
+
+    private fun handleLoadingViewState() {
+        // TODO handle loading UI
+    }
+
+    private fun handleContentViewState(content: CameraViewStateContent) {
+        when (content) {
+            is CameraViewStateContent.Completed -> handleCompletedViewState()
+        }
+    }
+
+    private fun handleErrorViewState(error: Throwable) {
+
+    }
+
+    private fun handleCompletedViewState() {
+        findNavController().navigateUp()
     }
 
     private fun createOutputFile(): File {
