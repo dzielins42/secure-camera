@@ -15,4 +15,6 @@
     <string name="password_incorrect_dialog_title">Password incorrect</string>
     <string name="password_incorrect_dialog_msg">Please type correct password.</string>
     <string name="password_incorrect_dialog_positier_button">@android:string/ok</string>
+
+    <string name="gallery_error">There was error during loading gallery content</string>
 </resources>

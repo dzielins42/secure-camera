@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_gallery.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pl.dzielins42.seccam.R
@@ -35,13 +36,24 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
     private fun handleViewState(viewState: GalleryViewState) {
         Timber.d("New view state: $viewState")
-        when (viewState) {
-            is ListGalleryViewState -> handleListGalleryViewState(viewState)
-        }
+        viewState.handle(
+            { handleLoadingViewState() },
+            { content -> handleContentViewState(content) },
+            { error -> handleErrorViewState(error) }
+        )
     }
 
-    private fun handleListGalleryViewState(viewState: ListGalleryViewState) {
-        adapter.submitList(viewState.items)
+    private fun handleLoadingViewState() {
+        // TODO handle loading UI
+    }
+
+    private fun handleContentViewState(content: List<GalleryItem>) {
+        adapter.submitList(content)
+    }
+
+    private fun handleErrorViewState(error: Throwable) {
+        Timber.d(error)
+        Snackbar.make(requireView(), R.string.gallery_error, Snackbar.LENGTH_LONG).show()
     }
 
     private fun onItemClick(item: GalleryItem) {
