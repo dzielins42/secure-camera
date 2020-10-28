@@ -20,6 +20,17 @@ class SharedPreferencesPasswordRepository(
         }
     }
 
+    override suspend fun getPassword(): String {
+        return withContext(Dispatchers.IO) {
+            if (!sharedPreferences.contains(SHARED_PREFS_KEY_PASSWORD)) {
+                prepopulatePassword()
+            }
+
+            // Password was pre-populated above so it should not be null
+            sharedPreferences.getString(SHARED_PREFS_KEY_PASSWORD, null)!!
+        }
+    }
+
     // Normally used would provide password, but setting the password is out of the scope
     private fun prepopulatePassword() {
         sharedPreferences.edit().putString(SHARED_PREFS_KEY_PASSWORD, BuildConfig.PASSWORD).apply()
