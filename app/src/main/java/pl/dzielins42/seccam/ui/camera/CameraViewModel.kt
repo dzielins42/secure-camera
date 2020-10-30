@@ -7,8 +7,8 @@ import io.fotoapparat.result.BitmapPhoto
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import pl.dzielins42.bloxyz.lce.LceViewState
 import pl.dzielins42.seccam.data.repo.GalleryRepository
-import pl.dzielins42.seccam.util.LceViewState
 import pl.dzielins42.seccam.util.RxViewModel
 import pl.dzielins42.seccam.util.rotate
 

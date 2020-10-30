@@ -1,18 +1,17 @@
 package pl.dzielins42.seccam.ui.password
 
 import android.os.Bundle
-import android.transition.TransitionManager
 import android.view.View
-import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.fragment_password.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import pl.dzielins42.bloxyz.fragment.LceFragment
+import pl.dzielins42.bloxyz.lce.LceViewState
 import pl.dzielins42.seccam.R
 
-class PasswordFragment : Fragment(R.layout.fragment_password) {
+class PasswordFragment : LceFragment(R.layout.fragment_password) {
 
     private val viewModel by viewModel<PasswordViewModel>()
 
@@ -30,27 +29,29 @@ class PasswordFragment : Fragment(R.layout.fragment_password) {
         viewModel.viewState.observe(viewLifecycleOwner, Observer { handleViewState(it) })
     }
 
-    private fun handleViewState(viewState: PasswordViewState) {
-        when (viewState) {
+    private fun handleViewState(viewState: LceViewState<PasswordViewState>) {
+        viewState.handle(
+            { handleLoadingViewState() },
+            { content -> handleContentViewState(content) }
+            // Error view state is not expected from ViewModel
+        )
+
+    }
+
+    private fun handleContentViewState(content: PasswordViewState) {
+        when (content) {
             PasswordViewState.Idle -> handleIdleViewState()
-            PasswordViewState.Loading -> handleLoadingViewState()
             PasswordViewState.PasswordCorrect -> handlePasswordCorrectViewState()
             PasswordViewState.PasswordIncorrect -> handlePasswordIncorrectViewState()
         }
     }
 
     private fun handleIdleViewState() {
-        TransitionManager.beginDelayedTransition(fragmentRootView)
-        passwordInputContainer.isVisible = true
-        confirmButton.isVisible = true
-        loadingIndicator.isVisible = false
+        showContent()
     }
 
     private fun handleLoadingViewState() {
-        TransitionManager.beginDelayedTransition(fragmentRootView)
-        passwordInputContainer.isVisible = false
-        confirmButton.isVisible = false
-        loadingIndicator.isVisible = true
+        showLoading()
     }
 
     private fun handlePasswordCorrectViewState() {

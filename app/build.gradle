@@ -92,4 +92,7 @@ dependencies {
     // RxJava
     implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
     implementation "io.reactivex.rxjava3:rxandroid:$rxAndroidVersion"
+
+    // Bloxyz
+    implementation 'com.github.dzielins42:Bloxyz:master-SNAPSHOT'
 }
