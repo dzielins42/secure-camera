@@ -8,11 +8,12 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_gallery.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import pl.dzielins42.bloxyz.fragment.LceFragment
 import pl.dzielins42.seccam.R
 import pl.dzielins42.seccam.data.model.GalleryItem
 import timber.log.Timber
 
-class GalleryFragment : Fragment(R.layout.fragment_gallery) {
+class GalleryFragment : LceFragment(R.layout.fragment_gallery) {
 
     private val viewModel by viewModel<GalleryViewModel>()
     private val adapter = GalleryAdapter { item ->
@@ -31,7 +32,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     }
 
     private fun initViewModel() {
-        viewModel.viewState.observe(viewLifecycleOwner, Observer { handleViewState(it) })
+        viewModel.viewState.observe(viewLifecycleOwner, { handleViewState(it) })
     }
 
     private fun handleViewState(viewState: GalleryViewState) {
@@ -44,15 +45,17 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
     }
 
     private fun handleLoadingViewState() {
-        // TODO handle loading UI
+        showLoading()
     }
 
     private fun handleContentViewState(content: List<GalleryItem>) {
         adapter.submitList(content)
+        showContent()
     }
 
     private fun handleErrorViewState(error: Throwable) {
         Timber.d(error)
+        showContent()
         Snackbar.make(requireView(), R.string.gallery_error, Snackbar.LENGTH_LONG).show()
     }
 
