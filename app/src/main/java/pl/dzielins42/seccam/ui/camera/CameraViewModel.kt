@@ -42,6 +42,18 @@ class CameraViewModel(
         }
     }
 
+    fun permissionsNotGranted() {
+        mutableViewState.value = LceViewState.content(CameraViewStateContent.PermissionsNotGranted)
+    }
+
+    fun fotoapparatStarted() {
+        mutableViewState.value = LceViewState.content(CameraViewStateContent.Initialized)
+    }
+
+    fun fotoapparatStopped() {
+        mutableViewState.value = LceViewState.loading()
+    }
+
     private fun rotateBitmapPhoto(bitmapPhoto: BitmapPhoto): Single<Bitmap> {
         return Single.fromCallable {
             bitmapPhoto.bitmap.rotate(-bitmapPhoto.rotationDegrees)

@@ -24,4 +24,6 @@
     <string name="photo_delete_dialog_msg">This photo will be deleted.</string>
     <string name="photo_delete_dialog_positive_button">@android:string/ok</string>
     <string name="photo_delete_dialog_negative_button">@android:string/cancel</string>
+
+    <string name="camera_no_permissions_label">Required permissions not granted</string>
 </resources>

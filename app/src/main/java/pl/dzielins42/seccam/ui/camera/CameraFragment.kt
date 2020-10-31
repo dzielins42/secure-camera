@@ -5,23 +5,23 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import io.fotoapparat.Fotoapparat
 import io.fotoapparat.result.BitmapPhoto
 import io.fotoapparat.result.WhenDoneListener
 import io.fotoapparat.selector.back
 import kotlinx.android.synthetic.main.fragment_camera.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import pl.dzielins42.bloxyz.fragment.LceFragment
 import pl.dzielins42.seccam.R
 import pl.dzielins42.seccam.util.TimberLogger
 import pl.dzielins42.seccam.util.checkGrantResults
 import pl.dzielins42.seccam.util.runWithPermissions
-import pl.dzielins42.seccam.util.shouldShowRationaleDialog
 import timber.log.Timber
 import java.util.*
 
-class CameraFragment : Fragment(R.layout.fragment_camera) {
+class CameraFragment : LceFragment(R.layout.fragment_camera) {
 
     private val viewModel by viewModel<CameraViewModel>()
     private lateinit var fotoapparat: Fotoapparat
@@ -69,21 +69,20 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (checkGrantResults(grantResults)) {
                 startFotoapparat()
-            } else if (shouldShowRationaleDialog(permissions)) {
-                // TODO Show rationale
-                Timber.d("Show rationale dialog")
+            } else {
+                viewModel.permissionsNotGranted()
             }
         }
     }
 
     private fun startFotoapparat() {
-        takePhotoButton.isVisible = true
         fotoapparat.start()
+        viewModel.fotoapparatStarted()
     }
 
     private fun stopFotoapparat() {
         fotoapparat.stop()
-        takePhotoButton.isVisible = false
+        viewModel.fotoapparatStopped()
     }
 
     private fun takePhoto() {
@@ -92,6 +91,7 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
             .takePicture()
             .toBitmap()
             .whenDone(object : WhenDoneListener<BitmapPhoto> {
+                @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
                 override fun whenDone(bitmapPhoto: BitmapPhoto?) {
                     viewModel.savePhoto(formatDate(), bitmapPhoto)
                 }
@@ -111,21 +111,42 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
     }
 
     private fun handleLoadingViewState() {
-        // TODO handle loading UI
+        showLoading()
     }
 
     private fun handleContentViewState(content: CameraViewStateContent) {
         when (content) {
-            is CameraViewStateContent.Completed -> handleCompletedViewState()
+            CameraViewStateContent.Completed -> handleCompletedViewState()
+            CameraViewStateContent.Initialized -> handleInitializedViewState()
+            CameraViewStateContent.PermissionsNotGranted -> handlePermissionsNotGrantedViewState()
         }
     }
 
     private fun handleErrorViewState(error: Throwable) {
-
+        getErrorMessage(error)?.let { errorMsg ->
+            Snackbar.make(requireView(), errorMsg, Snackbar.LENGTH_LONG).show()
+        }
+        findNavController().navigateUp()
     }
 
     private fun handleCompletedViewState() {
         findNavController().navigateUp()
+    }
+
+    private fun handleInitializedViewState() {
+        cameraView.isVisible = true
+        takePhotoButton.isVisible = true
+        noPermissionsLabel.isVisible = false
+        noPermissionsImage.isVisible = false
+        showContent()
+    }
+
+    private fun handlePermissionsNotGrantedViewState() {
+        cameraView.isVisible = false
+        takePhotoButton.isVisible = false
+        noPermissionsLabel.isVisible = true
+        noPermissionsImage.isVisible = true
+        showContent()
     }
 
     private fun formatDate(date: Date = Calendar.getInstance().time): String {
