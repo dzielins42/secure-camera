@@ -35,7 +35,6 @@ class PasswordFragment : LceFragment(R.layout.fragment_password) {
             { content -> handleContentViewState(content) }
             // Error view state is not expected from ViewModel
         )
-
     }
 
     private fun handleContentViewState(content: PasswordViewState) {
@@ -64,7 +63,7 @@ class PasswordFragment : LceFragment(R.layout.fragment_password) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.password_incorrect_dialog_title)
             .setMessage(R.string.password_incorrect_dialog_msg)
-            .setPositiveButton(R.string.password_incorrect_dialog_positier_button) { _, _ ->
+            .setPositiveButton(R.string.password_incorrect_dialog_positive_button) { _, _ ->
                 viewModel.incorrectPasswordDialogDismissed()
             }
             .setOnDismissListener {

@@ -6,7 +6,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import pl.dzielins42.bloxyz.lce.LceViewState
 import pl.dzielins42.seccam.data.repo.GalleryRepository
 import pl.dzielins42.seccam.util.RxViewModel
-import java.util.concurrent.TimeUnit
 
 class GalleryViewModel(
     private val galleryRepository: GalleryRepository

@@ -8,7 +8,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import pl.dzielins42.seccam.R
 
-
 class MainActivity : AppCompatActivity() {
 
     private val navController: NavController

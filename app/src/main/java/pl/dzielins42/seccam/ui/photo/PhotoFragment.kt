@@ -1,27 +1,110 @@
 package pl.dzielins42.seccam.ui.photo
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.fragment_photo.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import pl.dzielins42.bloxyz.fragment.LceFragment
+import pl.dzielins42.bloxyz.lce.LceViewState
 import pl.dzielins42.seccam.R
+import pl.dzielins42.seccam.data.model.GalleryItem
 
-class PhotoFragment : Fragment(R.layout.fragment_photo) {
+class PhotoFragment : LceFragment(R.layout.fragment_photo) {
 
+    private val viewModel by viewModel<PhotoViewModel>()
     private val args: PhotoFragmentArgs by navArgs()
+
+    private val galleryItem: GalleryItem
+        get() = args.item
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupUi()
+        initViewModel()
     }
 
-    private fun setupUi() {
-        val galleryItem = args.item
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.photo, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_delete) {
+            showDeleteConfirmationDialog()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.photo_delete_dialog_title)
+            .setMessage(R.string.photo_delete_dialog_msg)
+            .setPositiveButton(R.string.photo_delete_dialog_positive_button) { _, _ ->
+                viewModel.deleteItem(galleryItem.id)
+            }
+            .setNegativeButton(R.string.photo_delete_dialog_negative_button) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setOnDismissListener {
+                // NOP
+            }
+            .show()
+    }
+
+    private fun initViewModel() {
+        viewModel.viewState.observe(viewLifecycleOwner, Observer { handleViewState(it) })
+    }
+
+    private fun handleViewState(viewState: LceViewState<PhotoViewState>) {
+        viewState.handle(
+            { handleLoadingViewState() },
+            { handleContentViewState(it) }
+            // Error view state is not expected from ViewModel
+        )
+    }
+
+    private fun handleLoadingViewState() {
+        showLoading()
+    }
+
+    private fun handleContentViewState(viewState: PhotoViewState) {
+        when (viewState) {
+            PhotoViewState.IDLE -> handleIdleContentViewState()
+            PhotoViewState.DELETED -> handleDeletedContentViewState()
+        }
+
+    }
+
+    private fun handleIdleContentViewState() {
+        showPhoto()
+        showContent()
+    }
+
+    private fun handleDeletedContentViewState() {
+        findNavController().navigateUp()
+    }
+
+
+
+    private fun showPhoto() {
         Glide.with(this)
             .load(galleryItem)
+            .centerCrop()
             .into(imageView)
     }
 }

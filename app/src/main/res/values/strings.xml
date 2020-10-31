@@ -14,7 +14,13 @@
 
     <string name="password_incorrect_dialog_title">Password incorrect</string>
     <string name="password_incorrect_dialog_msg">Please type correct password.</string>
-    <string name="password_incorrect_dialog_positier_button">@android:string/ok</string>
+    <string name="password_incorrect_dialog_positive_button">@android:string/ok</string>
 
     <string name="gallery_error">There was error during loading gallery content</string>
+
+    <string name="photo_delete">Delete</string>
+    <string name="photo_delete_dialog_title">Delete</string>
+    <string name="photo_delete_dialog_msg">This photo will be deleted.</string>
+    <string name="photo_delete_dialog_positive_button">@android:string/ok</string>
+    <string name="photo_delete_dialog_negative_button">@android:string/cancel</string>
 </resources>

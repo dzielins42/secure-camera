@@ -15,6 +15,7 @@ import pl.dzielins42.seccam.data.repo.SharedPreferencesPasswordRepository
 import pl.dzielins42.seccam.ui.camera.CameraViewModel
 import pl.dzielins42.seccam.ui.gallery.GalleryViewModel
 import pl.dzielins42.seccam.ui.password.PasswordViewModel
+import pl.dzielins42.seccam.ui.photo.PhotoViewModel
 import pl.dzielins42.seccam.util.TimberKoinLogger
 import timber.log.Timber
 import timber.log.Timber.DebugTree
@@ -44,6 +45,7 @@ class MyApplication : Application() {
                     viewModel { GalleryViewModel(get()) }
                     viewModel { PasswordViewModel(get()) }
                     viewModel { CameraViewModel(get()) }
+                    viewModel { PhotoViewModel(get()) }
                 },
                 // Data
                 module {
