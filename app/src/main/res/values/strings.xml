@@ -17,6 +17,7 @@
     <string name="password_incorrect_dialog_positive_button">@android:string/ok</string>
 
     <string name="gallery_error">There was error during loading gallery content</string>
+    <string name="gallery_empty">Gallery is empty</string>
 
     <string name="photo_delete">Delete</string>
     <string name="photo_delete_dialog_title">Delete</string>

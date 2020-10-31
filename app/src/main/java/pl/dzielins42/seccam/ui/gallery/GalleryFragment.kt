@@ -2,6 +2,7 @@ package pl.dzielins42.seccam.ui.gallery
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_gallery.*
@@ -48,6 +49,8 @@ class GalleryFragment : LceFragment(R.layout.fragment_gallery) {
 
     private fun handleContentViewState(content: List<GalleryItem>) {
         adapter.submitList(content)
+        emptyListView.isVisible = content.isEmpty()
+        recyclerView.isVisible = content.isNotEmpty()
         showContent()
     }
 

@@ -2,6 +2,7 @@
 <resources>
     <dimen name="baseSpace">8dp</dimen>
     <dimen name="bigSpace">16dp</dimen>
+    <dimen name="biggerSpace">24dp</dimen>
 
     <integer name="galleryGridColumns">2</integer>
     <integer name="galleryGridRows">4</integer>
