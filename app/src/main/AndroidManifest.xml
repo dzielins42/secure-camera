@@ -3,7 +3,6 @@
     package="pl.dzielins42.seccam">
 
     <uses-feature android:name="android.hardware.camera" android:required="true" />
-    <!--TODO Remove when not needed-->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application

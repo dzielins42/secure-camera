@@ -7,6 +7,10 @@ import io.reactivex.rxjava3.processors.BehaviorProcessor
 import pl.dzielins42.seccam.data.model.GalleryItem
 import pl.dzielins42.seccam.data.model.UrlGalleryItem
 
+/**
+ * This is [GalleryRepository] implementation used during development. It uses set of images from
+ * https://www.placecage.com.
+ */
 class PlaceCageGalleryRepository : GalleryRepository {
 
     private val images: Flowable<List<GalleryItem>> = BehaviorProcessor.createDefault(initialList)
@@ -16,12 +20,12 @@ class PlaceCageGalleryRepository : GalleryRepository {
     }
 
     override fun saveGalleryItem(itemId: String, bitmap: Bitmap): Completable {
-        // TODO Not yet implemented
+        // Not supported
         return Completable.complete()
     }
 
     override fun deleteGalleryItem(itemId: String): Completable {
-        // TODO Not yet implemented
+        // Not supported
         return Completable.complete()
     }
 
