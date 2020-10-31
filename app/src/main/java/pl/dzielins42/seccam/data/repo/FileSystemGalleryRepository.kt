@@ -26,7 +26,7 @@ class FileSystemGalleryRepository(
     private val fileObserver: FileObserver
     private val fileListProcessor: BehaviorProcessor<List<File>> =
         BehaviorProcessor.createDefault(emptyList())
-    private val fileListFlowable: Flowable<List<File>> = fileListProcessor.distinctUntilChanged()
+    private val fileListFlowable: Flowable<List<File>>
 
     init {
         if (!baseDir.exists() && !baseDir.mkdirs()) {
@@ -36,12 +36,18 @@ class FileSystemGalleryRepository(
             throw IllegalArgumentException("$baseDir is not a directory")
         }
 
+        // FileObserver(File) was added in API level 29
+        @Suppress("DEPRECATION")
         fileObserver = object : FileObserver(baseDir.path) {
             override fun onEvent(event: Int, path: String?) {
                 refreshFileList().subscribe()
             }
         }
-        fileObserver.startWatching()
+
+        fileListFlowable = fileListProcessor.distinctUntilChanged()
+            .doOnSubscribe { fileObserver.startWatching() }
+            .doOnCancel { fileObserver.stopWatching() }
+            .share()
     }
 
     override fun observeGalleryItems(): Flowable<List<GalleryItem>> {
