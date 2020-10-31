@@ -19,7 +19,6 @@ import pl.dzielins42.seccam.util.checkGrantResults
 import pl.dzielins42.seccam.util.runWithPermissions
 import pl.dzielins42.seccam.util.shouldShowRationaleDialog
 import timber.log.Timber
-import java.io.File
 import java.util.*
 
 class CameraFragment : Fragment(R.layout.fragment_camera) {
@@ -127,11 +126,6 @@ class CameraFragment : Fragment(R.layout.fragment_camera) {
 
     private fun handleCompletedViewState() {
         findNavController().navigateUp()
-    }
-
-    private fun createOutputFile(): File {
-        val filename = "${formatDate()}.jpg"
-        return File(requireContext().filesDir, filename)
     }
 
     private fun formatDate(date: Date = Calendar.getInstance().time): String {

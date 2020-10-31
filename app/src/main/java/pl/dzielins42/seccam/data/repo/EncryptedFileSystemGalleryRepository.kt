@@ -7,20 +7,22 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.processors.BehaviorProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
-import org.jetbrains.annotations.TestOnly
-import pl.dzielins42.seccam.data.model.FileGalleryItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import pl.dzielins42.seccam.crypto.EncryptionProvider
+import pl.dzielins42.seccam.crypto.NoEncryptionProvider
+import pl.dzielins42.seccam.data.model.EncryptedFileGalleryItem
 import pl.dzielins42.seccam.data.model.GalleryItem
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 
 /**
- * [GalleryRepository] implementation based on local file system.
+ * [GalleryRepository] implementation based on local file system that encrypts saved bitmaps.
  */
-class FileSystemGalleryRepository(
+class EncryptedFileSystemGalleryRepository(
     private val baseDir: File,
-    private val bitmapEncoder: BitmapEncoder = SimpleBitmapEncoder()
+    private val encryptionProvider: EncryptionProvider = NoEncryptionProvider(),
+    fileObserverFactory: FileObserverFactory = defaultFileObserverFactory
 ) : GalleryRepository {
 
     private val fileObserver: FileObserver
@@ -36,12 +38,10 @@ class FileSystemGalleryRepository(
             throw IllegalArgumentException("$baseDir is not a directory")
         }
 
-        // FileObserver(File) was added in API level 29
-        @Suppress("DEPRECATION")
-        fileObserver = object : FileObserver(baseDir.path) {
-            override fun onEvent(event: Int, path: String?) {
-                refreshFileList().subscribe()
-            }
+        fileObserver = fileObserverFactory.build(
+            baseDir
+        ) { _, _ ->
+            refreshFileList().subscribe()
         }
 
         fileListFlowable = fileListProcessor.distinctUntilChanged()
@@ -56,19 +56,18 @@ class FileSystemGalleryRepository(
             .flatMapSingle {
                 Flowable.fromIterable(it)
                     .subscribeOn(Schedulers.computation())
-                    .map { FileGalleryItem(it) }
+                    .map { EncryptedFileGalleryItem(it) }
                     .toList()
             }
     }
 
     override fun saveGalleryItem(itemId: String, bitmap: Bitmap): Completable {
         return Completable.fromAction {
-            val fileName = "$itemId.jpg"
-            val file = File(baseDir, fileName)
+            val file = File(baseDir, itemId)
             if (!file.createNewFile()) {
-                throw IOException("File $fileName cannot be created")
+                throw IOException("File $itemId cannot be created")
             }
-            bitmapEncoder.encode(bitmap, file)
+            runBlocking { encodeBitmap(bitmap, file) }
         }.subscribeOn(Schedulers.io())
     }
 
@@ -85,6 +84,20 @@ class FileSystemGalleryRepository(
         }.subscribeOn(Schedulers.io())
     }
 
+    private suspend fun encodeBitmap(bitmap: Bitmap, file: File) {
+        val byteArray: ByteArray
+        ByteArrayOutputStream().use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+            byteArray = out.toByteArray()
+        }
+        val encryptedByteArray = encryptionProvider.encrypt(byteArray)
+        withContext(Dispatchers.IO) {
+            FileOutputStream(file).use { out ->
+                out.write(encryptedByteArray)
+            }
+        }
+    }
+
     private fun refreshFileList(): Completable {
         val listFilesAction = Single.fromCallable {
             baseDir.listFiles()?.asList() ?: emptyList<File>()
@@ -94,19 +107,21 @@ class FileSystemGalleryRepository(
             .flatMapCompletable { Completable.fromAction { fileListProcessor.onNext(it) } }
     }
 
-    @TestOnly
-    internal fun getFileObserver(): FileObserver = fileObserver
-
-}
-
-interface BitmapEncoder {
-    fun encode(bitmap: Bitmap, file: File)
-}
-
-class SimpleBitmapEncoder : BitmapEncoder {
-    override fun encode(bitmap: Bitmap, file: File) {
-        FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+    companion object {
+        private val defaultFileObserverFactory = object : FileObserverFactory {
+            override fun build(baseDir: File, callback: (Int, String?) -> Unit): FileObserver {
+                // FileObserver(File) was added in API level 29
+                @Suppress("DEPRECATION")
+                return object : FileObserver(baseDir.path) {
+                    override fun onEvent(event: Int, path: String?) {
+                        callback.invoke(event, path)
+                    }
+                }
+            }
         }
     }
+}
+
+interface FileObserverFactory {
+    fun build(baseDir: File, callback: (Int, String?) -> Unit): FileObserver
 }

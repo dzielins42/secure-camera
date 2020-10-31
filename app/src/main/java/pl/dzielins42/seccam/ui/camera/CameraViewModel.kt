@@ -23,7 +23,7 @@ class CameraViewModel(
     fun savePhoto(id: String, bitmapPhoto: BitmapPhoto?) {
         if (bitmapPhoto != null) {
             mutableViewState.value = LceViewState.loading()
-            rorateBitmapPhoto(bitmapPhoto)
+            rotateBitmapPhoto(bitmapPhoto)
                 .flatMapCompletable { bitmap ->
                     galleryRepository.saveGalleryItem(id, bitmap)
                 }
@@ -42,7 +42,7 @@ class CameraViewModel(
         }
     }
 
-    private fun rorateBitmapPhoto(bitmapPhoto: BitmapPhoto): Single<Bitmap> {
+    private fun rotateBitmapPhoto(bitmapPhoto: BitmapPhoto): Single<Bitmap> {
         return Single.fromCallable {
             bitmapPhoto.bitmap.rotate(-bitmapPhoto.rotationDegrees)
         }.subscribeOn(Schedulers.computation())

@@ -8,7 +8,9 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import pl.dzielins42.seccam.data.repo.FileSystemGalleryRepository
+import pl.dzielins42.seccam.crypto.EncryptionProvider
+import pl.dzielins42.seccam.crypto.StringPasswordEncryptionProvider
+import pl.dzielins42.seccam.data.repo.EncryptedFileSystemGalleryRepository
 import pl.dzielins42.seccam.data.repo.GalleryRepository
 import pl.dzielins42.seccam.data.repo.PasswordRepository
 import pl.dzielins42.seccam.data.repo.SharedPreferencesPasswordRepository
@@ -67,8 +69,14 @@ class MyApplication : Application() {
                     }
 
                     single { provideMasterKey(get()) }
+                    single<EncryptionProvider> { StringPasswordEncryptionProvider(get()) }
                     single { provideSharedPreferences(get(), get()) }
-                    single<GalleryRepository> { FileSystemGalleryRepository(this@MyApplication.filesDir) }
+                    single<GalleryRepository> {
+                        EncryptedFileSystemGalleryRepository(
+                            this@MyApplication.filesDir,
+                            get()
+                        )
+                    }
                     single<PasswordRepository> { SharedPreferencesPasswordRepository(get()) }
                 }
             ))

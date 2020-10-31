@@ -10,7 +10,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
 import pl.dzielins42.seccam.R
-import pl.dzielins42.seccam.data.model.FileGalleryItem
+import pl.dzielins42.seccam.data.model.EncryptedFileGalleryItem
 import pl.dzielins42.seccam.data.model.UrlGalleryItem
 import java.io.InputStream
 
@@ -24,9 +24,9 @@ class MyAppGlideModule : AppGlideModule() {
             UrlGalleryItemModelLoader.Factory()
         )
         registry.prepend(
-            FileGalleryItem::class.java,
+            EncryptedFileGalleryItem::class.java,
             InputStream::class.java,
-            FileGalleryItemModelLoader.Factory()
+            EncryptedFileGalleryItemModelLoader.Factory()
         )
     }
 

@@ -7,10 +7,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.*
 import pl.dzielins42.seccam.RxImmediateSchedulerExtension
-import pl.dzielins42.seccam.data.model.FileGalleryItem
+import pl.dzielins42.seccam.data.model.EncryptedFileGalleryItem
 import pl.dzielins42.seccam.evaluate
 import java.io.File
 
@@ -19,7 +18,7 @@ import java.io.File
         RxImmediateSchedulerExtension::class
     ]
 )
-internal class FileSystemGalleryRepositoryTest {
+internal class EncryptedFileSystemGalleryRepositoryTest {
 
     @Nested
     @DisplayName("init")
@@ -35,7 +34,7 @@ internal class FileSystemGalleryRepositoryTest {
             // Assert
             Assertions.assertThrows(
                 IllegalArgumentException::class.java
-            ) { FileSystemGalleryRepository(baseDir) }
+            ) { EncryptedFileSystemGalleryRepository(baseDir) }
         }
 
         @Test
@@ -49,7 +48,7 @@ internal class FileSystemGalleryRepositoryTest {
             // Assert
             Assertions.assertThrows(
                 IllegalArgumentException::class.java
-            ) { FileSystemGalleryRepository(baseDir) }
+            ) { EncryptedFileSystemGalleryRepository(baseDir) }
         }
     }
 
@@ -62,7 +61,10 @@ internal class FileSystemGalleryRepositoryTest {
             // Arrange
             val baseDir = mockBaseDir()
             `when`(baseDir.listFiles()).thenReturn(emptyArray())
-            val repository = FileSystemGalleryRepository(baseDir)
+            val repository = EncryptedFileSystemGalleryRepository(
+                baseDir,
+                fileObserverFactory = MockFileObserverFactory()
+            )
 
             // Act
             val testSubscriber = repository.observeGalleryItems().test()
@@ -82,7 +84,10 @@ internal class FileSystemGalleryRepositoryTest {
             )
             val baseDir = mockBaseDir()
             `when`(baseDir.listFiles()).thenReturn(mockFiles)
-            val repository = FileSystemGalleryRepository(baseDir)
+            val repository = EncryptedFileSystemGalleryRepository(
+                baseDir,
+                fileObserverFactory = MockFileObserverFactory()
+            )
 
             // Act
             val testSubscriber = repository.observeGalleryItems().test()
@@ -97,22 +102,26 @@ internal class FileSystemGalleryRepositoryTest {
         @DisplayName("If baseDir content changes, then new item is emitted")
         fun `If baseDir content changes, then new item is emitted`() {
             // Arrange
+            val mockFileObserverFactory = MockFileObserverFactory()
             val mockFile1 = createMockFile("file1")
             val mockFile2 = createMockFile("file2")
             val mockFile3 = createMockFile("file3")
             val mockFile4 = createMockFile("file4")
             val mockFiles1 = arrayOf(mockFile1, mockFile2)
             val mockFiles2 = arrayOf(mockFile1, mockFile3, mockFile4)
-            val expectedResult1 = mockFiles1.asList().map { FileGalleryItem(it) }
-            val expectedResult2 = mockFiles2.asList().map { FileGalleryItem(it) }
+            val expectedResult1 = mockFiles1.asList().map { EncryptedFileGalleryItem(it) }
+            val expectedResult2 = mockFiles2.asList().map { EncryptedFileGalleryItem(it) }
             val baseDir = mockBaseDir()
             `when`(baseDir.listFiles()).thenReturn(mockFiles1)
-            val repository = FileSystemGalleryRepository(baseDir)
+            val repository = EncryptedFileSystemGalleryRepository(
+                baseDir,
+                fileObserverFactory = mockFileObserverFactory
+            )
 
             // Act
             val testSubscriber = repository.observeGalleryItems().test()
             `when`(baseDir.listFiles()).thenReturn(mockFiles2)
-            repository.getFileObserver().onEvent(FileObserver.ALL_EVENTS, null)
+            mockFileObserverFactory.fileObserver!!.onEvent(FileObserver.ALL_EVENTS, null)
 
             // Assert
             testSubscriber
@@ -136,23 +145,27 @@ internal class FileSystemGalleryRepositoryTest {
         @DisplayName("If file is deleted from baseDir, then new item is emitted")
         fun `If file is deleted from baseDir, then new item is emitted`() {
             // Arrange
+            val mockFileObserverFactory = MockFileObserverFactory()
             val mockFile1 = createMockFile("file1")
             val mockFile2 = createMockFile("file2")
             val mockFile3 = createMockFile("file3")
             val mockFile4 = createMockFile("file4")
             val mockFiles1 = arrayOf(mockFile1, mockFile2, mockFile3, mockFile4)
             val mockFiles2 = arrayOf(mockFile1, mockFile3, mockFile4)
-            val expectedResult1 = mockFiles1.asList().map { FileGalleryItem(it) }
-            val expectedResult2 = mockFiles2.asList().map { FileGalleryItem(it) }
+            val expectedResult1 = mockFiles1.asList().map { EncryptedFileGalleryItem(it) }
+            val expectedResult2 = mockFiles2.asList().map { EncryptedFileGalleryItem(it) }
             val baseDir = mockBaseDir()
             `when`(baseDir.listFiles()).thenReturn(mockFiles1)
-            val repository = FileSystemGalleryRepository(baseDir)
+            val repository = EncryptedFileSystemGalleryRepository(
+                baseDir,
+                fileObserverFactory = mockFileObserverFactory
+            )
 
             // Act
             val testSubscriber = repository.observeGalleryItems().test()
-            repository.deleteGalleryItem(FileGalleryItem(mockFile2).id).blockingAwait()
+            repository.deleteGalleryItem(EncryptedFileGalleryItem(mockFile2).id).blockingAwait()
             `when`(baseDir.listFiles()).thenReturn(mockFiles2)
-            repository.getFileObserver().onEvent(FileObserver.ALL_EVENTS, null)
+            mockFileObserverFactory.fileObserver!!.onEvent(FileObserver.ALL_EVENTS, null)
 
             // Assert
             testSubscriber
@@ -195,5 +208,23 @@ internal class FileSystemGalleryRepositoryTest {
         `when`(mockBaseDir.mkdirs()).thenReturn(mkDir)
 
         return mockBaseDir
+    }
+
+    private class MockFileObserverFactory : FileObserverFactory {
+        var fileObserver: FileObserver? = null
+
+        override fun build(baseDir: File, callback: (Int, String?) -> Unit): FileObserver {
+            if (fileObserver != null) {
+                throw IllegalStateException("This factory can produce only one instance!")
+            }
+            val mockFileObserver = mock(FileObserver::class.java)
+            `when`(mockFileObserver.onEvent(anyInt(), any())).thenAnswer { invocation ->
+                val event: Int = invocation.arguments[0] as Int
+                val path: String? = invocation.arguments[0] as? String
+                callback.invoke(event, path)
+            }
+            fileObserver = mockFileObserver
+            return mockFileObserver
+        }
     }
 }

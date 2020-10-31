@@ -9,7 +9,7 @@ sealed class GalleryItem : Parcelable {
 }
 
 @Parcelize
-data class FileGalleryItem(
+data class EncryptedFileGalleryItem(
     val file: File
 ) : GalleryItem() {
     override val id: String

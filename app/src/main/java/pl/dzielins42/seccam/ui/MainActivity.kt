@@ -7,8 +7,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import pl.dzielins42.seccam.R
-import pl.dzielins42.seccam.util.Registry
 import pl.dzielins42.seccam.util.OnBackPressedListener
+import pl.dzielins42.seccam.util.Registry
 
 class MainActivity : AppCompatActivity(), Registry<OnBackPressedListener> {
 
