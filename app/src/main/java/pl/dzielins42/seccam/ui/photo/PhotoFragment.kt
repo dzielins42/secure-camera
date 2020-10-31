@@ -1,5 +1,6 @@
 package pl.dzielins42.seccam.ui.photo
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,17 +11,22 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_photo.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pl.dzielins42.bloxyz.fragment.LceFragment
 import pl.dzielins42.bloxyz.lce.LceViewState
 import pl.dzielins42.seccam.R
 import pl.dzielins42.seccam.data.model.GalleryItem
+import pl.dzielins42.seccam.util.OnBackPressedListener
+import pl.dzielins42.seccam.util.Registry
 
-class PhotoFragment : LceFragment(R.layout.fragment_photo) {
+class PhotoFragment : LceFragment(R.layout.fragment_photo), OnBackPressedListener {
 
     private val viewModel by viewModel<PhotoViewModel>()
     private val args: PhotoFragmentArgs by navArgs()
+
+    private var blockBack: Boolean = false
 
     private val galleryItem: GalleryItem
         get() = args.item
@@ -50,6 +56,18 @@ class PhotoFragment : LceFragment(R.layout.fragment_photo) {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        @Suppress("UNCHECKED_CAST")
+        (requireActivity() as? Registry<OnBackPressedListener>)?.register(this)
+    }
+
+    override fun onDetach() {
+        @Suppress("UNCHECKED_CAST")
+        (requireActivity() as? Registry<OnBackPressedListener>)?.unregister(this)
+        super.onDetach()
+    }
+
     private fun showDeleteConfirmationDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.photo_delete_dialog_title)
@@ -71,10 +89,11 @@ class PhotoFragment : LceFragment(R.layout.fragment_photo) {
     }
 
     private fun handleViewState(viewState: LceViewState<PhotoViewState>) {
+        blockBack = viewState.isLoading
         viewState.handle(
             { handleLoadingViewState() },
-            { handleContentViewState(it) }
-            // Error view state is not expected from ViewModel
+            { handleContentViewState(it) },
+            { handleErrorViewState(it) }
         )
     }
 
@@ -87,7 +106,13 @@ class PhotoFragment : LceFragment(R.layout.fragment_photo) {
             PhotoViewState.IDLE -> handleIdleContentViewState()
             PhotoViewState.DELETED -> handleDeletedContentViewState()
         }
+    }
 
+    private fun handleErrorViewState(error: Throwable) {
+        showContent()
+        getErrorMessage(error)?.let { errorMsg ->
+            Snackbar.make(requireView(), errorMsg, Snackbar.LENGTH_LONG).show()
+        }
     }
 
     private fun handleIdleContentViewState() {
@@ -99,12 +124,16 @@ class PhotoFragment : LceFragment(R.layout.fragment_photo) {
         findNavController().navigateUp()
     }
 
-
-
     private fun showPhoto() {
         Glide.with(this)
             .load(galleryItem)
             .centerCrop()
             .into(imageView)
     }
+
+    //region OnBackPressedListener
+    override fun onBackPressed(): Boolean {
+        return !blockBack
+    }
+    //endregion
 }

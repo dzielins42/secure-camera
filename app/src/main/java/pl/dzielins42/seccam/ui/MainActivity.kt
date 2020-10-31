@@ -7,9 +7,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import pl.dzielins42.seccam.R
+import pl.dzielins42.seccam.util.Registry
+import pl.dzielins42.seccam.util.OnBackPressedListener
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Registry<OnBackPressedListener> {
 
+    private val onBackPressedListenerRegistry: MutableSet<OnBackPressedListener> = mutableSetOf()
     private val navController: NavController
         get() {
             val navHostFragment =
@@ -28,6 +31,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
+        return doNavigateUp() && (navController.navigateUp() || super.onSupportNavigateUp())
+    }
+
+    override fun onBackPressed() {
+        if (!doNavigateUp()) {
+            return
+        }
+        super.onBackPressed()
+    }
+
+    //region OnBackPressedListener
+    override fun register(element: OnBackPressedListener) {
+        onBackPressedListenerRegistry.add(element)
+    }
+
+    override fun unregister(element: OnBackPressedListener) {
+        onBackPressedListenerRegistry.remove(element)
+    }
+    //endregion
+
+    fun doNavigateUp(): Boolean {
+        return onBackPressedListenerRegistry.none { !it.onBackPressed() }
     }
 }
