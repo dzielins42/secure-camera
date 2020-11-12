@@ -93,7 +93,10 @@ class CameraFragment : LceFragment(R.layout.fragment_camera) {
             .whenDone(object : WhenDoneListener<BitmapPhoto> {
                 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
                 override fun whenDone(bitmapPhoto: BitmapPhoto?) {
-                    viewModel.savePhoto(formatDate(), bitmapPhoto)
+                    viewModel.savePhoto(
+                        formatDate() + "_"+ UUID.randomUUID().toString(),
+                        bitmapPhoto
+                    )
                 }
             })
     }
